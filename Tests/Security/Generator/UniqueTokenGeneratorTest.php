@@ -72,7 +72,7 @@ final class UniqueTokenGeneratorTest extends TestCase
         $this->generatorMock->expects($this->once())->method('generateUriSafeString')->with(12)->willReturn($token);
         $this->checkerMock->expects($this->once())->method('isUnique')->with($token)->willReturn(true);
 
-        $this->assertIsString($this->uniqueTokenGenerator->generate());
+        self::assertNotEmpty($this->uniqueTokenGenerator->generate());
     }
 
     public function testShouldRegenerateTokenUntilUnique(): void
