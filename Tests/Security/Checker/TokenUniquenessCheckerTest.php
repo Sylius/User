@@ -53,7 +53,7 @@ final class TokenUniquenessCheckerTest extends TestCase
         $this->userRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['aRandomToken' => 'takenToken'])
-            ->willReturn($this->any());
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->assertFalse($this->tokenUniquenessChecker->isUnique('takenToken'));
     }

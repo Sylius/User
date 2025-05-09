@@ -47,6 +47,10 @@ final class UniqueTokenGeneratorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         new UniqueTokenGenerator($this->generatorMock, $this->checkerMock, -1);
+    }
+
+    public function testShouldThrowInvalidArgumentExceptionOnInstantiationWithZeroLength(): void
+    {
         $this->expectException(InvalidArgumentException::class);
         new UniqueTokenGenerator($this->generatorMock, $this->checkerMock, 0);
     }
@@ -58,7 +62,7 @@ final class UniqueTokenGeneratorTest extends TestCase
         $this->generatorMock->expects($this->once())->method('generateUriSafeString')->with(12)->willReturn($token);
         $this->checkerMock->expects($this->once())->method('isUnique')->with($token)->willReturn(true);
 
-        $this->uniqueTokenGenerator->generate();
+        $this->assertSame($token, $this->uniqueTokenGenerator->generate());
     }
 
     public function testShouldGenerateStringTokens(): void
@@ -69,5 +73,24 @@ final class UniqueTokenGeneratorTest extends TestCase
         $this->checkerMock->expects($this->once())->method('isUnique')->with($token)->willReturn(true);
 
         $this->assertIsString($this->uniqueTokenGenerator->generate());
+    }
+
+    public function testShouldRegenerateTokenUntilUnique(): void
+    {
+        $firstToken = 'notunique';
+        $secondToken = 'uniquetoken';
+
+        $this->generatorMock->expects($this->exactly(2))
+            ->method('generateUriSafeString')
+            ->with(12)
+            ->willReturnOnConsecutiveCalls($firstToken, $secondToken);
+        $this->checkerMock->expects($this->exactly(2))
+            ->method('isUnique')
+            ->willReturnMap([
+                [$firstToken, false],
+                [$secondToken, true],
+            ]);
+
+        $this->assertSame($secondToken, $this->uniqueTokenGenerator->generate());
     }
 }
