@@ -9,7 +9,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="SyliusUserComponent Test Suite">
+        <testsuite name="sylius-user-component">
             <directory>./Tests/</directory>
         </testsuite>
     </testsuites>
